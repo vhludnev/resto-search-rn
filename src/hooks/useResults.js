@@ -3,21 +3,26 @@ import yelp from '../api/yelp';
 
 export default () => {
   const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('');
 
   const searchApi = async (searchTerm, cityzip) => {
+    setLoading(true)
     setErrorMessage('')
     try {
-      const response = await yelp.get('/search', {
+      const options = {
         params: {
-          limit: 25,
+          limit: 25,      // aka: '/search?limit=50' 
           term: searchTerm,
           location: cityzip
         }
-      });
-      setResults(response.data.businesses);
+      }
+      const { data } = await yelp.get('/search', options);
+      setResults(data.businesses);
+      setLoading(false)
     } catch (err) {
-      setErrorMessage('Something went wrong');
+      setErrorMessage('Please check City or Zip code');
+      setLoading(false)
     }
   };
 
@@ -28,5 +33,5 @@ export default () => {
     searchApi('raviolli', 'New York');
   }, []);
 
-  return [searchApi, results, errorMessage];
+  return [searchApi, results, loading, errorMessage];
 };

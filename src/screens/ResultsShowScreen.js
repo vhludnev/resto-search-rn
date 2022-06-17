@@ -51,7 +51,7 @@ const ResultsShowScreen = ({ route }) => {
         <TextRow><MaterialCommunityIcons name="food-fork-drink" size={14} /* color='#333' */ />{' '} 
           {result.categories.map(cat => cat.title).join(', ')}
         </TextRow>
-        {result.transactions.length ? (<TextRow>Services: {result.transactions.join(', ').replace('_', ' ')}</TextRow>) : null}
+        {result.transactions.length ? <TextRow>Services: {result.transactions.join(', ').replace('_', ' ')}</TextRow> : null}
       </View>
     </>
   );
