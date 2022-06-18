@@ -12,7 +12,7 @@ export default () => {
     try {
       const options = {
         params: {
-          limit: 25,      // aka: '/search?limit=50' 
+          limit: 50,      // aka: '/search?limit=50' 
           term: searchTerm,
           location: cityzip
         }
@@ -29,9 +29,10 @@ export default () => {
   // Call searchApi when component
   // is first rendered.  BAD CODE!
   // searchApi('pasta');
-  useEffect(() => {
+
+  /* useEffect(() => {
     searchApi('raviolli', 'New York');
-  }, []);
+  }, []); */
 
   return [searchApi, results, loading, errorMessage];
 };
