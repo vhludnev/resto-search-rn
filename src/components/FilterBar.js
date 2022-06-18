@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
 import { /* useTheme, */ useNavigation } from '@react-navigation/native'
 import { Feather, MaterialIcons, MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
+import { ResultsContext } from './ResultsContext'
 
 const FilterBar = ({ onSort, changeView, gridView }) => {
   //const { colors } = useTheme()
+  const { active, setActive } = useContext(ResultsContext)
   const navigation = useNavigation()
 
   const filters = [
@@ -54,38 +56,38 @@ const FilterBar = ({ onSort, changeView, gridView }) => {
           //   )
           // }}
         >
-          {filters.map(filter => (
-           <TouchableOpacity
-              style={styles.button}
-              key={filter.name}
-              onPress={() => { onSort && onSort(filter.label) }}
+         {filters.map(filter => (
+            <TouchableOpacity
+               style={[styles.button, active === filter.name && {backgroundColor: '#fff', borderColor: '#4E74D2'}]}
+               key={filter.name}
+               onPress={() => { onSort && onSort(filter.label); setActive(filter.name) }}
             >
-              <View style={styles.containerStyle}>
-                {/* {icon && icon} */}
-                <Text numberOfLines={1} ellipsizeMode="clip" style={styles.textStyle} >
-                  {filter.label}
-                </Text>
-              </View>
+               <View style={styles.containerStyle}>
+                  {/* {icon && icon} */}
+                  <Text numberOfLines={1} ellipsizeMode="clip" style={[styles.textStyle, active === filter.name && {color: '#4E74D2'}]} >
+                     {filter.label}
+                  </Text>
+               </View>
             </TouchableOpacity>
           ))}
-        </ScrollView>
-        <TouchableOpacity /* style={{position: 'absolute', left: 55, top: 3}} */ onPress={() => { navigation.navigate('Search', {label: 'all'}) }}>
-          <FontAwesome name="refresh" size={20} color='#4E74D2' />
-        </TouchableOpacity>
-        <Text style={{marginHorizontal: 5, color: 'lightgrey', fontSize: 18, marginTop: -4}} >|</Text>
-        {gridView ? (
-          <TouchableOpacity onPress={/* () => {changeView && changeView()} */() => { changeView && changeView() }}>
+         </ScrollView>
+         <TouchableOpacity /* style={{position: 'absolute', left: 55, top: 3}} */ onPress={() => { navigation.navigate('Search', {label: 'all'}) }}>
+            <FontAwesome name="refresh" size={20} color='#4E74D2' />
+         </TouchableOpacity>
+         <Text style={{marginHorizontal: 5, color: 'lightgrey', fontSize: 18, marginTop: -4}} >|</Text>
+         {gridView ? (
+         <TouchableOpacity onPress={/* () => {changeView && changeView()} */() => { changeView && changeView() }}>
             <MaterialIcons name="grid-view" size={20} color='#4E74D2' />
-          </TouchableOpacity>) : (
-          <TouchableOpacity onPress={/* () => {changeView && changeView()} */() => { changeView && changeView() }}>
+         </TouchableOpacity>) : (
+         <TouchableOpacity onPress={/* () => {changeView && changeView()} */() => { changeView && changeView() }}>
             <MaterialCommunityIcons name="format-list-bulleted-square" size={20} color='#4E74D2' />
-          </TouchableOpacity>
-        )}
-        <Text style={{marginHorizontal: 5, color: 'lightgrey', fontSize: 18, marginTop: -4}} >|</Text>
-        <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => {navigation.getParent('LeftDrawer').openDrawer()/* ; navigation.setParams({ name: 'Lucy' }) */}}>
-          <Feather name="filter" size={20} color='#4E74D2' />
-          <Text style={{color: '#4E74D2'}}>filter</Text>
-        </TouchableOpacity>
+         </TouchableOpacity>
+         )}
+         <Text style={{marginHorizontal: 5, color: 'lightgrey', fontSize: 18, marginTop: -4}} >|</Text>
+         <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => {navigation.getParent('LeftDrawer').openDrawer()/* ; navigation.setParams({ name: 'Lucy' }) */}}>
+            <Feather name="filter" size={20} color='#4E74D2' />
+            <Text style={{color: '#4E74D2'}}>filter</Text>
+         </TouchableOpacity>
       </View>
     </>
   )
@@ -115,7 +117,9 @@ const styles = StyleSheet.create({
   button: {
     marginRight: 8,
     borderRadius: 8,
-    backgroundColor: "#4E74D2"
+    borderWidth: 1,
+    borderColor: "#4E74D2",
+    backgroundColor: "#4E74D2",
   },
   inputStyle: {
     flex: 1,

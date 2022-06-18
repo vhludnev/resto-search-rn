@@ -15,7 +15,8 @@ const CustomDarkTheme = {
      input: '#999',
      placeholder: '#333',
      title: '#fff',
-     filter: '#cccccc'
+     filter: '#cccccc',
+     icon: '#b2b2b2'
    }
 }
 
@@ -27,7 +28,8 @@ const CustomDefaultThemeTheme = {
       input: '#dcdcdc',
       placeholder: '#999',
       title: '#4E74D2',
-      filter: '#f5f5f5'
+      filter: '#f5f5f5',
+      icon: '#d8d8d8'
       //primary: 'rgb(255, 45, 85)',
       //background: 'rgb(242, 242, 242)',
       //card: 'rgb(255, 255, 255)',

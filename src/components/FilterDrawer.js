@@ -2,16 +2,22 @@ import React, { useState, useContext, useEffect } from 'react'
 import { View, Text, StyleSheet, StatusBar, TouchableOpacity } from 'react-native'
 import { DrawerContentScrollView/* ,  DrawerItemList */ , useDrawerStatus } from '@react-navigation/drawer'
 import { useTheme } from '@react-navigation/native'
-import { Foundation, AntDesign, Ionicons } from '@expo/vector-icons'
+import { Foundation, AntDesign, Ionicons, MaterialIcons } from '@expo/vector-icons'
 import { MultiSelect } from 'react-native-element-dropdown'
 import { ResultsContext } from './ResultsContext'
 
 const FilterDrawer = (props) => {
-   const { data, selectedCategories, setSelectedCategories, selectedServices, setSelectedServices } = useContext(ResultsContext)
+   const { data, price, setPrice, stars, setStars, selectedCategories, setSelectedCategories, selectedServices, setSelectedServices } = useContext(ResultsContext)
    const [selectedCat, setSelectedCat] = useState([])
    const [selectedSer, setSelectedSer] = useState([])
+   //const [price, setPrice] = useState(4)
    const { colors } = useTheme()
    const isDrawerOpen = useDrawerStatus() === 'open'
+
+   const convertedString = (el) => {
+      const item = el.replace('_', ' ')
+      return item.charAt(0).toUpperCase() + item.substring(1)
+   }
 
    const categoriesArr = data.map(res => {
       const [{alias, title}] = res.categories
@@ -22,19 +28,26 @@ const FilterDrawer = (props) => {
    const servicesArr = data.map(res => { 
       return res.transactions 
    })
-   const services = [...new Set(servicesArr.flat())].map(el => {return {label: el.charAt(0).toUpperCase() + el.substring(1)}})
+   const services = [...new Set(servicesArr.flat())].map(el => {return {label: convertedString(el), value: el}})
 
+   // useEffect(() => {
+   //    if (!isDrawerOpen) {
+   //       setSelectedCategories(selectedCat)
+   //       setSelectedServices(selectedSer)
+   //    }
+   // }, [isDrawerOpen])
+//console.log(selectedSer)
    useEffect(() => {
-      if (!isDrawerOpen) {
-         setSelectedCategories(selectedCat)
-         setSelectedServices(selectedSer)
+      if (isDrawerOpen) {
+         setSelectedCat(selectedCategories)
+         setSelectedSer(selectedServices)
       }
    }, [isDrawerOpen])
 
    useEffect(() => {
-      setSelectedCat(selectedCategories)
-      setSelectedSer(selectedServices)
-   }, [])
+      setSelectedCategories(selectedCat)
+      setSelectedServices(selectedSer)
+   }, [selectedCat, selectedSer])
 
    return (
       <DrawerContentScrollView {...props}>
@@ -44,21 +57,31 @@ const FilterDrawer = (props) => {
             <View style={{ flexDirection: 'row', paddingTop: 20, justifyContent: 'space-around', alignItems: 'center' }} >
             <View style={{flex: 1, alignItems: 'center'}}>
                <Text style={{paddingBottom: 8, color: colors.text}}>Price</Text>
-               <TouchableOpacity style={[styles.column, {backgroundColor: colors.filter, flexDirection: 'row'}]} onPress={() => console.log('pressed')}>
-                  <Foundation name="dollar" size={21} color="black" style={{paddingHorizontal: 4}} value={1}/>
-                  <Foundation name="dollar" size={21} color="black" style={{paddingHorizontal: 4}} value={2}/>
-                  <Foundation name="dollar" size={21} color="black" style={{paddingHorizontal: 4}} value={3}/>
-                  <Foundation name="dollar" size={21} color="black" style={{paddingHorizontal: 4}} value={4}/>
-                  <Foundation name="dollar" size={21} color="#b2b2b2" style={{paddingHorizontal: 4}} value={5}/>   
+               <View style={[styles.column, {backgroundColor: colors.filter, flexDirection: 'row'}]} >
+                  <TouchableOpacity onPress={() => setPrice(undefined)}>
+                     <Foundation name="dollar" size={21} color="black" style={{paddingHorizontal: 4}} />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => setPrice(2)}>
+                     <Foundation name="dollar" size={21} color={price > 1 ? "black" : colors.icon} style={{paddingHorizontal: 4}} />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => setPrice(3)}>
+                     <Foundation name="dollar" size={21} color={price > 2 ? "black" : colors.icon} style={{paddingHorizontal: 4}} />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => setPrice(4)}>
+                     <Foundation name="dollar" size={21} color={price > 3 ? "black" : colors.icon} style={{paddingHorizontal: 4}} />
+                  </TouchableOpacity>
+                 {/*  <Foundation name="dollar" size={21} color="black" style={{paddingHorizontal: 4}} value={2}/>
+                  <Foundation name="dollar" size={21} color="black" style={{paddingHorizontal: 4}} value={3}/> */}
+                  {/* <Foundation name="dollar" size={21} color="#b2b2b2" style={{paddingHorizontal: 4}} value={4}/>  */}  
                   <Text style={{paddingLeft: 5, fontSize: 12}}>& </Text>
                   <Ionicons name="ios-arrow-down" size={14} />
-               </TouchableOpacity>
+               </View>
             </View>
             <View style={{flex: 1, alignItems: 'center'}}>
                <View style={{paddingBottom: 8}}>
                   <Text style={{color: colors.text}}>Stars</Text>
                </View>
-               <TouchableOpacity style={[styles.column, {backgroundColor: colors.filter, flexDirection: 'row'}]} activeOpacity={0.5} onPress={() => { props.navigation.navigate('Search', {label: 'stars'}) }}>
+               <TouchableOpacity style={[styles.column, {backgroundColor: colors.filter, flexDirection: 'row', borderColor: stars && 'orange', borderWidth: stars ? 1 : 0}]} activeOpacity={0.5} onPress={() => { setStars(!stars)/* props.navigation.navigate('Search', {label: 'stars'}) */ }}>
                   <AntDesign name="star" size={13} color="orange" style={{paddingHorizontal: 1, paddingTop: 2}}/>
                   <AntDesign name="star" size={13} color="orange" style={{paddingHorizontal: 1, paddingTop: 2}}/>
                   <AntDesign name="star" size={13} color="orange" style={{paddingHorizontal: 1, paddingTop: 2}}/>
@@ -69,43 +92,44 @@ const FilterDrawer = (props) => {
                </TouchableOpacity>
             </View>
             </View>
-            <View style={selectStyles.container}>
+            <View style={[selectStyles.container, {marginTop: 10}]}>
                <MultiSelect
                   style={[selectStyles.dropdown, {color: colors.text, backgroundColor: colors.filter}]}
                   placeholderStyle={selectStyles.placeholderStyle}
                   selectedTextStyle={selectStyles.selectedTextStyle}
                   inputSearchStyle={selectStyles.inputSearchStyle}
                   iconStyle={selectStyles.iconStyle}
-                  search
+                  //search
                   data={categories}
                   labelField="label"
                   valueField="value"
                   placeholder="Select categories"
                   searchPlaceholder="Search..."
                   value={selectedCat}
-                  onChange={item => { setSelectedCat(item) }}
+                  onChange={item => setSelectedCat(item) }
+                  //onBlur={() => setSelectedCategories(selectedCat)}
                   renderLeftIcon={() => (
-                     <AntDesign
-                     style={selectStyles.icon}
-                     color="black"
-                     name="Safety"
-                     size={20}
+                     <MaterialIcons
+                        style={selectStyles.icon}
+                        color="black"
+                        name="category"
+                        size={20}
                      />
                   )}
-                  renderItem={item => {
+                  renderItem={(item, selected) => {
                      return (
-                     <View style={selectStyles.item}>
-                        <Text style={selectStyles.selectedTextStyle}>{item.label}</Text>
-                        <AntDesign style={selectStyles.icon} color="#4E74D2" name="Safety" size={18} />
-                     </View>
+                        <View style={selectStyles.item}>
+                           <Text style={selectStyles.selectedTextStyle}>{item.label}</Text>
+                           {selected && <Ionicons style={selectStyles.icon} color="#4E74D2" name="checkmark" size={18} />}
+                        </View>
                      )
                   }}
                   renderSelectedItem={(item, unSelect) => (
                      <TouchableOpacity onPress={() => unSelect && unSelect(item)}>
-                     <View style={selectStyles.selectedStyle}>
-                        <Text style={selectStyles.textSelectedStyle}>{item.label}</Text>
-                        <AntDesign color="black" name="delete" size={17} />
-                     </View>
+                        <View style={selectStyles.selectedStyle}>
+                           <Text style={selectStyles.textSelectedStyle}>{item.label}</Text>
+                           <AntDesign color="black" name="delete" size={14} style={{paddingLeft: 2}} />
+                        </View>
                      </TouchableOpacity>
                   )}
                />
@@ -117,27 +141,28 @@ const FilterDrawer = (props) => {
                   selectedTextStyle={selectStyles.selectedTextStyle}
                   inputSearchStyle={selectStyles.inputSearchStyle}
                   iconStyle={selectStyles.iconStyle}
+                  //activeColor='#ccc'
                   //search
                   data={services}
                   labelField="label"
-                  valueField="label"
+                  valueField="value"
                   placeholder="Select services"
                   searchPlaceholder="Search..."
                   value={selectedSer}
                   onChange={item => { setSelectedSer(item) }}
                   renderLeftIcon={() => (
-                     <AntDesign
-                     style={selectStyles.icon}
-                     color="black"
-                     name="Safety"
-                     size={20}
+                     <MaterialIcons 
+                        style={selectStyles.icon}
+                        color="black"
+                        name="delivery-dining"
+                        size={20}
                      />
                   )}
-                  renderItem={item => {
+                  renderItem={(item, selected) => {
                      return (
                      <View style={selectStyles.item}>
                         <Text style={selectStyles.selectedTextStyle}>{item.label}</Text>
-                        <AntDesign style={selectStyles.icon} color="#4E74D2" name="Safety" size={18} />
+                        {selected && <Ionicons style={selectStyles.icon} color="#4E74D2" name="checkmark" size={18} />}
                      </View>
                      )
                   }}
@@ -145,7 +170,7 @@ const FilterDrawer = (props) => {
                      <TouchableOpacity onPress={() => unSelect && unSelect(item)}>
                      <View style={selectStyles.selectedStyle}>
                         <Text style={selectStyles.textSelectedStyle}>{item.label}</Text>
-                        <AntDesign color="black" name="delete" size={17} />
+                        <AntDesign color="black" name="delete" size={14} style={{paddingLeft: 2}}/>
                      </View>
                      </TouchableOpacity>
                   )}
@@ -199,7 +224,7 @@ const styles = StyleSheet.create({
 const selectStyles = StyleSheet.create({
   container: { padding: 16 },
   dropdown: {
-    height: 40,
+    height: 30,
     //backgroundColor: 'white',
     borderRadius: 6,
     padding: 12,
@@ -214,6 +239,7 @@ const selectStyles = StyleSheet.create({
   },
   placeholderStyle: {
     fontSize: 16,
+    textAlign: 'center'
   },
   selectedTextStyle: {
     fontSize: 14,
@@ -230,7 +256,8 @@ const selectStyles = StyleSheet.create({
     marginRight: 5,
   },
   item: {
-    padding: 15,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -244,8 +271,8 @@ const selectStyles = StyleSheet.create({
     shadowColor: '#000',
     marginTop: 8,
     marginRight: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     shadowOffset: {
       width: 0,
       height: 1,
@@ -256,7 +283,7 @@ const selectStyles = StyleSheet.create({
   },
   textSelectedStyle: {
     marginRight: 5,
-    fontSize: 16,
+    fontSize: 14,
   },
 })
 

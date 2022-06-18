@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect, useRef, useCallback } from 'react';
 import { SafeAreaView, View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { useDrawerStatus } from '@react-navigation/drawer'
 import { useTheme } from '@react-navigation/native'
@@ -20,16 +20,26 @@ const SearchScreen = ({route}) => {
   const [gridView, setGridView] = useState(true)
   const [resultsArr, setResultsArr] = useState([])
   const [searchApi, results, loading, errorMessage] = useResults();
-  const { /* data, */ setData, setSelectedCategories, selectedCategories, selectedServices, setSelectedServices } = useContext(ResultsContext)
+  const { price, setPrice, stars, setStars, setActive, setData, setSelectedCategories, selectedCategories, selectedServices, setSelectedServices } = useContext(ResultsContext)
   const { colors } = useTheme()
   const isDrawerOpen = useDrawerStatus() === 'open'
 
   const filterResultsByPrice = price => {
     // price === '$' || '$$' || '$$$' || '$$$$'
-    return resultsArr.filter(result => result.price === price )
-  };
+    return resultsArr.filter(result => result.price === price)
+  }
 
-  const sortResultsBy = (data, sortType) => {
+  const filteredResultsbyPrice = useCallback((data) => {
+    return data.filter(result => {
+      /* if (result.price === undefined && price < 2) {
+        return result.price === '$' || undefined
+      } else { */
+        return String(result.price).length <= price
+      //}
+    })
+  }, [price])
+
+  const sortResultsBy = (resultsArr, sortType) => {
     if (sortType === 'rating') {
       return [...resultsArr].sort((a, b) => b.rating - a.rating)/* .filter(result => result.price === price) */
     } else if (sortType === 'name') {
@@ -68,49 +78,64 @@ const SearchScreen = ({route}) => {
 
   useEffect(() => {
     if (!loading) {
-      setResultsArr(results)
-      setData(results)
-      const dataCity = results.map(res => res.location.city)
+      setResultsArr(filteredResultsbyPrice(results))
+      setData(filteredResultsbyPrice(results))
+      const dataCity = filteredResultsbyPrice(results).map(res => res.location.city)
       //setCities([...new Set(data)].join(', '))
       setCities(dataCity[0])
     }
-  }, [loading])
+  }, [loading, price])
 
   useEffect(() => {
     if (route.params) {
-      if (route.params.label === 'stars') {
+      /* if (route.params.label === 'stars') {
         const newArr = [...resultsArr].filter(item => item.rating >= 4)
         setResultsArr(newArr)
-      } else if (route.params.label === 'all') {
+      } else */ if (route.params.label === 'all') {
+        setStars(null)
+        setPrice(4)
         setResultsArr(results)
         setSelectedCategories([])
         setSelectedServices([])
+        setActive(null)
       } 
       moveToTop()
+      //console.log(route.params.categories)
     }
   }, [route.params])
 
-  useEffect(() => {
+  useEffect(() => {    
     if (!isDrawerOpen) {
-      setResultsArr(results)
-
-      if (selectedServices.length) {
-        const newServArr = [...resultsArr].some((item) => {
-          const { transactions } = item
-          return selectedServices.includes(transactions)
-        })
-        setResultsArr(newServArr)
+      setActive(null)
+      if (selectedCategories.length === 0 || selectedServices.length === 0) {
+        setResultsArr(results)
       }
 
-      if (selectedCategories.length) {
-        const newCatArr = [...resultsArr].filter((item) => {
+      let catFilteredArr = []
+      if (selectedCategories && selectedCategories.length > 0) {
+        const newCatArr = [...results].filter((item) => {
           const [{ alias }] = item.categories
           return selectedCategories.includes(alias)
         })
         setResultsArr(newCatArr)
+        catFilteredArr = [...newCatArr]
+      } 
+
+      if (selectedServices.length > 0) {
+        let arrToUse = catFilteredArr.length ? catFilteredArr : results
+        const newServArr = [...arrToUse].filter((item) => {
+          const { transactions } = item
+          return transactions.some(el => selectedServices.includes(el))
+        })
+        setResultsArr(newServArr)
       }
+
+      if (stars) {
+        const newArr = [...resultsArr].filter(item => {return item.rating >= 4})
+        setResultsArr(newArr)
+      } 
     } 
-  }, [isDrawerOpen])
+  }, [isDrawerOpen, /* selectedCategories, */ /* selectedServices,  *//* stars */])
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -134,16 +159,16 @@ const SearchScreen = ({route}) => {
         <>
           {cities ? (
             <Text style={{color: colors.text, marginLeft: 10, paddingBottom: 15}}>We have found 
-              <Text style={{color: 'green', fontWeight: 'bold'}}> {resultsArr.length} </Text> 
-              <Text>{resultsArr.length === 1 ? 'result' : 'results'} in </Text>
+              <Text style={{color: 'green', fontWeight: 'bold'}}> {filteredResultsbyPrice(resultsArr).length} </Text> 
+              <Text>{filteredResultsbyPrice(resultsArr).length === 1 ? 'result' : 'results'} in </Text>
               <Text style={{fontWeight: 'bold'}}>{cities}</Text>
             </Text>
           ) : null}
           <ScrollView>
-            <ResultsList results={filterResultsByPrice('$')} title="Cost Effective" gridView={gridView} flatListRef={flatListRef1} />
-            <ResultsList results={filterResultsByPrice('$$')} title="Bit Pricier" gridView={gridView} flatListRef={flatListRef2} />
-            <ResultsList results={filterResultsByPrice('$$$')} title="Big Spender" gridView={gridView} flatListRef={flatListRef3} />   
-            <ResultsList results={filterResultsByPrice('$$$$')} title="Luxury" gridView={gridView} flatListRef={flatListRef4} />  
+            <ResultsList results={[...filterResultsByPrice('$'), ...filterResultsByPrice(undefined)]} title="Cost Effective" gridView={gridView} flatListRef={flatListRef1} />
+            {price > 1 && <ResultsList results={filterResultsByPrice('$$')} title="Bit Pricier" gridView={gridView} flatListRef={flatListRef2} />}
+            {price > 2 && <ResultsList results={filterResultsByPrice('$$$')} title="Big Spender" gridView={gridView} flatListRef={flatListRef3} />  } 
+            {price > 3 && <ResultsList results={filterResultsByPrice('$$$$')} title="Luxury" gridView={gridView} flatListRef={flatListRef4} /> } 
           </ScrollView> 
         </> 
       ) : null}
