@@ -8,6 +8,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import SearchScreen from './src/screens/SearchScreen';
 import ResultsShowScreen from './src/screens/ResultsShowScreen';
 
+import ShowImage from './src/components/ShowImage'
 import FilterDrawer from './src/components/FilterDrawer'
 import { ThemeContext, CustomDefaultThemeTheme, CustomDarkTheme } from './src/components/ThemeContext'
 import { ResultsProvider } from './src/components/ResultsContext'
@@ -22,7 +23,10 @@ const MainStack = () => {
     <Stack.Navigator 
       initialRouteName='Search' 
       screenOptions={
-        {title: 'Restomerica', headerMode: 'screen', headerTitleAlign: 'center', 
+        {
+          title: 'Restomerica', 
+          headerMode: 'screen', 
+          headerTitleAlign: 'center', 
           headerRight: () => (
             <TouchableOpacity activeOpacity={0.7} onPress={() => setTheme(theme === CustomDefaultThemeTheme ? CustomDarkTheme : CustomDefaultThemeTheme)}>
               <MaterialCommunityIcons name="theme-light-dark" size={24} color={theme === CustomDarkTheme ? 'orange' : '#333'} />
@@ -34,11 +38,16 @@ const MainStack = () => {
           }
         }
       }>
-      <Stack.Screen name='Search' component={SearchScreen} />
+      <Stack.Screen name='Search' component={SearchScreen} /* options={{ headerShown: false }} */ />
       <Stack.Screen 
         name='ResultShow' 
         component={ResultsShowScreen} 
-        options={({ route: { params: {name} } }) => ({ title: `- ${name} -` }) }
+        options={({ route: { params: {name} } }) => ({ title: `- ${name} -` /* , headerShown: false */ }/* , {orientation: 'all'} */) }
+      />
+      <Stack.Screen 
+        name='ShowImage' 
+        component={ShowImage} 
+        options={{ headerShown: false }}
       />
       <Stack.Screen 
         name='Filter' 
@@ -54,7 +63,7 @@ const DrawerNav = () => {
     <Drawer.Navigator 
       //initialRouteName="Filter" 
       id='LeftDrawer'
-      screenOptions={{ drawerPosition: 'left', headerShown: false/*, overlayColor: 'transparent', drawerType: 'slide', drawerStyle: { width: '100%' } */}} 
+      screenOptions={{ drawerPosition: 'left', headerShown: false /*, overlayColor: 'transparent', drawerType: 'slide', drawerStyle: { width: '100%' } */}} 
       drawerContent={(props) => <FilterDrawer {...props} />}
     >
 

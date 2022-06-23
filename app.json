@@ -1,14 +1,17 @@
 {
   "expo": {
-    "name": "food",
-    "slug": "food",
-    "version": "1.0.0",
+    "name": "Restaurant search app",
+    "slug": "react-native-restaurant-app",
+    "version": "1.5.0",
+    "privacy": "public",
+    "sdkVersion": "45.0.0",
+    "platforms": ["ios","android","web"],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "resizeMode": "cover",
+      "backgroundColor": "#242832"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -17,16 +20,16 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.vjappcoder.restaurantus-rnapp",
+      "buildNumber": "1.5.0"
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
+      "package": "com.vjappcoder.restaurantus_rnapp",
+      "versionCode": 5,
+      "permissions": [
+        "ACCESS_FINE_LOCATION"
+      ]
     }
   }
 }

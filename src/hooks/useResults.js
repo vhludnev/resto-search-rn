@@ -6,7 +6,7 @@ export default () => {
   const [loading, setLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('');
 
-  const searchApi = async (searchTerm, cityzip) => {
+  const searchApi = async (searchTerm, cityzip, lat, lng) => {
     setLoading(true)
     setErrorMessage('')
     try {
@@ -14,11 +14,13 @@ export default () => {
         params: {
           limit: 50,      // aka: '/search?limit=50' 
           term: searchTerm,
-          location: cityzip
+          location: cityzip,
+          latitude: lat,
+          longitude: lng,
         }
       }
       const { data } = await yelp.get('/search', options);
-      setResults(data.businesses);
+      setResults(data.businesses)
       setLoading(false)
     } catch (err) {
       setErrorMessage('Please check City or Zip code');
@@ -30,9 +32,9 @@ export default () => {
   // is first rendered.  BAD CODE!
   // searchApi('pasta');
 
-  useEffect(() => {
-    searchApi('raviolli', 'New York');
-  }, []);
+  // useEffect(() => {
+  //   searchApi('gelato', null, 34.055471389994, -118.11960285847806);
+  // }, []);
 
   return [searchApi, results, loading, errorMessage];
 };

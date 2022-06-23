@@ -11,6 +11,7 @@ const SearchBar = ({ term, cityzip, onCityZipChange, onTermChange, onTermSubmit 
       <View style={[styles.backgroundStyle, {backgroundColor: colors.input}]}>
         <Feather name="search" size={28} style={[styles.iconStyle, {color: colors.text}]} />
         <TextInput
+          selectionColor='#4E74D2'
           autoCapitalize="none"
           autoCorrect={false}
           style={[styles.inputStyle, {color: colors.text, backgroundColor: colors.input}]}
@@ -25,6 +26,7 @@ const SearchBar = ({ term, cityzip, onCityZipChange, onTermChange, onTermSubmit 
       <View style={[styles.backgroundStyle, {marginTop: 0, backgroundColor: colors.input}]}>
         <MaterialIcons name="location-city" size={28} style={[styles.iconStyle, {color: colors.text}]} />
         <TextInput
+          selectionColor='#4E74D2'
           autoCapitalize='none'
           autoCorrect={false}
           style={[styles.inputStyle, {color: colors.text, backgroundColor: colors.input}]}

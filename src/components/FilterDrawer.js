@@ -58,7 +58,7 @@ const FilterDrawer = (props) => {
             <View style={{flex: 1, alignItems: 'center'}}>
                <Text style={{paddingBottom: 8, color: colors.text}}>Price</Text>
                <View style={[styles.column, {backgroundColor: colors.filter, flexDirection: 'row'}]} >
-                  <TouchableOpacity onPress={() => setPrice(undefined)}>
+                  <TouchableOpacity onPress={() => setPrice(1)}>
                      <Foundation name="dollar" size={21} color="black" style={{paddingHorizontal: 4}} />
                   </TouchableOpacity>
                   <TouchableOpacity onPress={() => setPrice(2)}>

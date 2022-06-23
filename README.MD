@@ -4,15 +4,19 @@
 - Expo (sdk v.45),
 - Yelp api,
 - Context API,
-- Adaptive styles (for portrait and landscape views),
 - Android and IOS friendly,
+- Multiple search filters and sorting opportunities 
+- Distance to restaurant based on user's geo location calculation
 
+<br />
 
-<br/><br/>
+Run on your device [Expo Go](https://expo.dev/@vjappcoder/react-native-restaurant-app?serviceType=classic&distribution=expo-go).
 
-## Installation & deploy
+<br/>
 
-The app requires [Node.js](https://nodejs.org/) v16+ and expo sli to run.
+## Installation
+
+The app requires [Node.js](https://nodejs.org/) v16+ and expo cli to run smoothly.
 
 Install the dependencies and devDependencies first. _Example:_
 
@@ -20,16 +24,5 @@ Install the dependencies and devDependencies first. _Example:_
 npm i
 npm i -g expo-cli
 expo init `App project name`
-expo login
-expo publish
-expo build:android -t apk `or` expo build:android -t app-bundle (*)
-expo fetch:android:keystore (*)
-expo upload:android (*)
-expo build:ios (**)
-expo upload:ios (**)
 
 ```
-
-(*) - _for android_
-<br/>
-(**) - _for ios_ -->
