@@ -5,8 +5,8 @@
 - Yelp api,
 - Context API,
 - Android and IOS friendly,
-- Multiple search filters and sorting opportunities 
-- Distance to restaurant based on user's geo location calculation
+- Multiple search filters and sorting opportunities, 
+- Distance to restaurant based on user's geo location calculation.
 
 <br />
 
