@@ -21,6 +21,7 @@ The app requires [Node.js](https://nodejs.org/) v16+ and expo cli to run smoothl
 Install the dependencies and devDependencies first. _Example:_
 
 ```sh
+git clone https://github.com/vhludnev/resto-search-rn.git
 npm i
 npm i -g expo-cli
 expo init `App project name`
